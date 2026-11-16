@@ -4,7 +4,8 @@
 ========================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "http://localhost:5000";
+  const API_URL = "https://nails-design-api.onrender.com";
+
 
   // Elementet e formularit
   const form = document.getElementById("booking-form");
