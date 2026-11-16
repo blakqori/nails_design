@@ -15,11 +15,8 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:5500",
-    "http://127.0.0.1:5500"
-    ],
-        credentials: true
-
+    origin: ["http://localhost:5500", "http://127.0.0.1:5500"],
+    credentials: true,
   }),
 );
 
@@ -50,13 +47,19 @@ app.use((req, res, next) => {
 });
 
 // Lidhja me PostgreSQL
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-});
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+      }
+    : {
+        host: process.env.DB_HOST,
+        port: Number(process.env.DB_PORT),
+        database: process.env.DB_NAME,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+      },
+);
 
 // Sesioni i administratorit
 app.use(
