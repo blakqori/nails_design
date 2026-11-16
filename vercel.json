@@ -22,10 +22,10 @@
       "use": "@vercel/static"
     }
   ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/backend/api"
-    }
-  ]
+ "rewrites": [
+  {
+    "source": "/api/:path*",
+    "destination": "/backend/api/:path*"
+  }
+]
 }
