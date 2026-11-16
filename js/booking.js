@@ -1,11 +1,9 @@
-
 /* ==========================================
    NAILS DESIGN - BOOKING SYSTEM
 ========================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "https://nails-design-api.onrender.com";
-
+  const API_URL = "/api";
 
   // Elementet e formularit
   const form = document.getElementById("booking-form");
@@ -31,9 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const submitButton = form.querySelector(
-    'button[type="submit"]'
-  );
+  const submitButton = form.querySelector('button[type="submit"]');
 
   // Data lokale ne formatin YYYY-MM-DD
   function getLocalDate(date) {
@@ -73,14 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const services = await response.json();
 
-      serviceSelect.replaceChildren(
-        new Option("Zgjidh sherbimin", "")
-      );
+      serviceSelect.replaceChildren(new Option("Zgjidh sherbimin", ""));
 
       services.forEach((service) => {
         const option = new Option(
           `${service.name} - ${service.price}€ (${service.duration_minutes} min)`,
-          String(service.id)
+          String(service.id),
         );
 
         serviceSelect.add(option);
@@ -91,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error loading services:", error);
 
       showMessage(
-        "Sherbimet nuk mund te ngarkohen. Kontrollo lidhjen me serverin."
+        "Sherbimet nuk mund te ngarkohen. Kontrollo lidhjen me serverin.",
       );
     }
   }
@@ -125,11 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const params = new URLSearchParams({
         date: selectedDate,
-        service_id: serviceId
+        service_id: serviceId,
       });
 
       const response = await fetch(
-        `${API_URL}/available-slots?${params.toString()}`
+        `${API_URL}/available-slots?${params.toString()}`,
       );
 
       if (!response.ok) {
@@ -145,9 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const now = new Date();
       const today = getLocalDate(now);
 
-      const availableSlots = (
-        data.availableSlots || []
-      ).filter((slot) => {
+      const availableSlots = (data.availableSlots || []).filter((slot) => {
         if (selectedDate > today) {
           return true;
         }
@@ -159,8 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const [hours, minutes] = slot.split(":").map(Number);
 
         const slotMinutes = hours * 60 + minutes;
-        const currentMinutes =
-          now.getHours() * 60 + now.getMinutes();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
         return slotMinutes > currentMinutes;
       });
@@ -170,9 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      timeSelect.replaceChildren(
-        new Option("Zgjidh oren", "")
-      );
+      timeSelect.replaceChildren(new Option("Zgjidh oren", ""));
 
       availableSlots.forEach((slot) => {
         timeSelect.add(new Option(slot, slot));
@@ -188,22 +177,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       resetTimes("Terminet nuk mund te ngarkohen");
 
-      showMessage(
-        "Nuk mund te ngarkohen terminet. Provo perseri."
-      );
+      showMessage("Nuk mund te ngarkohen terminet. Provo perseri.");
     }
   }
 
   // Kur ndryshon sherbimi ose data
-  serviceSelect.addEventListener(
-    "change",
-    loadAvailableSlots
-  );
+  serviceSelect.addEventListener("change", loadAvailableSlots);
 
-  dateInput.addEventListener(
-    "change",
-    loadAvailableSlots
-  );
+  dateInput.addEventListener("change", loadAvailableSlots);
 
   // ==========================================
   // 3. RUAJTJA E REZERVIMIT
@@ -222,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
       email: emailInput.value.trim() || null,
       service_id: Number(serviceSelect.value),
       appointment_date: dateInput.value,
-      start_time: timeSelect.value
+      start_time: timeSelect.value,
     };
 
     if (!bookingData.full_name || !bookingData.phone) {
@@ -240,9 +221,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await fetch(`${API_URL}/appointments`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(bookingData)
+        body: JSON.stringify(bookingData),
       });
 
       const result = await response.json();
@@ -251,13 +232,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response.status === 409) {
           await loadAvailableSlots();
 
-          showMessage(
-            "Ky termin eshte zene. Zgjidh nje ore tjeter."
-          );
+          showMessage("Ky termin eshte zene. Zgjidh nje ore tjeter.");
         } else {
-          showMessage(
-            result.message || "Rezervimi deshtoi."
-          );
+          showMessage(result.message || "Rezervimi deshtoi.");
         }
 
         return;
@@ -272,19 +249,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       showMessage(
         "Rezervimi u regjistrua me sukses! Ju lutemi prisni konfirmimin.",
-        true
+        true,
       );
 
-      console.log(
-        "Appointment created successfully:",
-        result
-      );
+      console.log("Appointment created successfully:", result);
     } catch (error) {
       console.error("Booking error:", error);
 
-      showMessage(
-        "Nuk mund te lidhemi me serverin. Provo perseri."
-      );
+      showMessage("Nuk mund te lidhemi me serverin. Provo perseri.");
     } finally {
       if (submitButton) {
         submitButton.disabled = false;
