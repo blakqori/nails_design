@@ -618,7 +618,11 @@ app.put("/admin/working-hours/:day", async (req, res) => {
   }
 });
 
-// Nisja e serverit
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Nisja lokale dhe eksportimi per Vercel
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
