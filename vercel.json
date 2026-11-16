@@ -22,10 +22,14 @@
       "use": "@vercel/static"
     }
   ],
- "rewrites": [
-  {
-    "source": "/api/:path*",
-    "destination": "/backend/api/:path*"
-  }
-]
+  "routes": [
+    {
+      "src": "^/api/(.*)$",
+      "dest": "/backend/api/index.js",
+      "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    },
+    {
+      "handle": "filesystem"
+    }
+  ]
 }
