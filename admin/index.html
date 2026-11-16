@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="sq">
+  <head>
+    <link rel="stylesheet" href="admin.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel | Nails Design</title>
+  </head>
+
+  <body>
+    <header>
+      <h1>Nails Design</h1>
+      <span>Paneli i Administrimit</span>
+      <button type="button" id="logout-btn">Dil nga paneli</button>
+    </header>
+
+    <main>
+      <h2>Mirë se erdhe në Admin Panel</h2>
+      <p class="subtitle">Menaxho rezervimet dhe aktivitetin e sallonit.</p>
+
+      <section class="stats">
+        <div class="stat">
+          <p>Gjithsej rezervime</p>
+          <strong id="total-bookings">0</strong>
+        </div>
+
+        <div class="stat">
+          <p>Në pritje</p>
+          <strong id="pending-bookings">0</strong>
+        </div>
+
+        <div class="stat">
+          <p>Të konfirmuara</p>
+          <strong id="confirmed-bookings">0</strong>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Lista e rezervimeve</h2>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Klientja</th>
+                <th>Telefoni</th>
+                <th>Shërbimi</th>
+                <th>Data</th>
+                <th>Ora</th>
+                <th>Statusi</th>
+                <th>Veprimet</th>
+              </tr>
+            </thead>
+
+            <tbody id="appointments-table">
+              <tr>
+                <td colspan="7">Rezervimet do të shfaqen këtu.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MENAXHIMI I ORARIT TE PUNES -->
+      <section class="panel" id="working-hours-panel">
+        <h2>Menaxhimi i orarit të punës</h2>
+        <p class="subtitle">
+          Ndrysho orët e punës ose hap dhe mbyll ditët e javës.
+        </p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dita</th>
+                <th>Statusi</th>
+                <th>Hapja</th>
+                <th>Mbyllja</th>
+                <th>Veprimi</th>
+              </tr>
+            </thead>
+
+            <tbody id="working-hours-table">
+              <tr>
+                <td colspan="5">Duke ngarkuar orarin...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p id="working-hours-message" role="status"></p>
+      </section>
+    </main>
+    <script src="admin.js" defer></script>
+  </body>
+</html>
