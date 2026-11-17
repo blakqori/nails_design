@@ -661,7 +661,6 @@ h2 {
    7. KONTAKTI
 =================================== */
 
-
 .contact {
   padding: 65px 0;
   background: linear-gradient(110deg, #fff7fa, #fceef3);
@@ -779,14 +778,6 @@ h2 {
     font-size: 25px;
   }
 }
-
-
-
-
-
-
-
-
 
 /* ===================================
    8. FOOTER
@@ -1078,22 +1069,19 @@ h2 {
     gap: 30px;
   }
 
-  
-
-.contact-quote {
-  position: absolute;
-  right: 5%;
-  top: 50%;
-  max-width: 220px;
-  margin: 0;
-  color: #d883a5;
-  font-family: "Caveat", cursive;
-  font-size: 27px;
-  line-height: 1.15;
-  text-align: center;
-  transform: translateY(-50%) rotate(-10deg);
-}
-
+  .contact-quote {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    max-width: 220px;
+    margin: 0;
+    color: #d883a5;
+    font-family: "Caveat", cursive;
+    font-size: 27px;
+    line-height: 1.15;
+    text-align: center;
+    transform: translateY(-50%) rotate(-10deg);
+  }
 }
 
 /* ===================================
@@ -1296,7 +1284,6 @@ h2 {
 =================================== */
 
 main > section {
-  min-height: calc(100vh - var(--sticky-offset));
   min-height: calc(100svh - var(--sticky-offset));
   scroll-margin-top: var(--sticky-offset);
 }
@@ -1781,8 +1768,7 @@ main > section {
     width: 22px;
     height: 22px;
   }
-  /* Keep the home page behind the dropdown; never stretch its menu items to fill the screen */
-  .hero,
+  /* Only the inner wrapper may shrink; the hero fills the viewport. */
   .hero-inner {
     min-height: 0;
   }
@@ -1849,29 +1835,28 @@ main > section {
     text-align: center;
     transform: rotate(-9deg);
   }
-  
-.hero-image {
-  display: block;
-  position: relative;
-  top: auto;
-  right: auto;
-  width: 70%;
-  height: clamp(300px, 55vw, 440px);
-  margin: 0 auto;
-  border: 0;
-  border-top: 2px solid #e8a1bc;
-  border-radius: 50% 50% 0 0 / 23% 23% 0 0;
-  overflow: hidden;
-  z-index: 1;
-}
 
- 
-.hero-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
+  .hero-image {
+    display: block;
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 85%;
+    height: clamp(300px, 55vw, 440px);
+    margin: 0 auto;
+    border: 0;
+    border-top: none;
+    border-radius: 28px;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 
   .hero-flower {
     display: block;
@@ -1890,15 +1875,6 @@ main > section {
   }
   .gallery-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  main > section {
-    min-height: 0;
-  }
-  .about,
-  .services,
-  .gallery,
-  .contact {
-    min-height: 0;
   }
 }
 @media (max-width: 600px) {
@@ -1975,7 +1951,6 @@ main > section {
     margin-left: 25px;
     width: calc(100% - 25px);
   }
-
 }
 
 @media (max-width: 600px) {
@@ -1992,7 +1967,6 @@ main > section {
     order: 2;
   }
 }
-
 
 /* CONTACT QUOTE - DESKTOP */
 #contact .contact-grid {
@@ -2011,7 +1985,6 @@ main > section {
 }
 
 /* CONTACT QUOTE - MOBILE */
-
 
 @media (max-width: 900px) {
   #contact .contact-content {
@@ -2032,13 +2005,38 @@ main > section {
   }
 }
 
-
 /* Final layout safeguards */
 @media (max-width: 600px) {
-  #contact .contact-content { padding-right: 78px; }
-  #contact .contact-quote { right: 0; width: 70px; max-width: 70px; font-size: 15px; }
+  #contact .contact-content {
+    padding-right: 78px;
+  }
+  #contact .contact-quote {
+    right: 0;
+    width: 70px;
+    max-width: 70px;
+    font-size: 15px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-btn {
+    width: 245px;
+    max-width: 100%;
+    min-height: 52px;
+    padding: 12px 18px;
+    gap: 10px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
 }

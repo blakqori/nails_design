@@ -3,8 +3,11 @@
 ========================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_URL = "/api";
-
+const API_URL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? "http://localhost:5000"
+    : "/api";
   // Elementet e formularit
   const form = document.getElementById("booking-form");
   const serviceSelect = document.getElementById("booking-service");
