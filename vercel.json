@@ -1,3 +1,4 @@
+
 {
   "version": 2,
   "builds": [
@@ -7,6 +8,14 @@
     },
     {
       "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "booking.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "booking.css",
       "use": "@vercel/static"
     },
     {
