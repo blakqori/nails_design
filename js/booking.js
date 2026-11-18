@@ -1,4 +1,4 @@
-/* NAILS DESIGN - Booking API; frontend on index.html */
+/* NAILS DESIGN - Booking API and service cards */
 document.addEventListener("DOMContentLoaded", () => {
   const API_URL = ["localhost", "127.0.0.1"].includes(window.location.hostname)
     ? "http://localhost:5000"
@@ -11,12 +11,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const phone = document.getElementById("booking-phone");
   const email = document.getElementById("booking-email");
   const message = document.getElementById("booking-message");
-  if (![form, service, date, time, name, phone, email, message].every(Boolean))
-    return;
+  const cardsContainer = document.getElementById("booking-service-cards");
+  // Rruget e fotografive kur API e production nuk kthen image_url.
+  const serviceImages = {
+    1: "/images/manikyrklasik.jpg",
+    2: "/images/manikyrgell.jpg",
+    3: "/images/nails3.jpg",
+    4: "/images/nails4.jpg",
+    5: "/images/nailart.jpg",
+    6: "/images/trajtimdheforcim.jpg",
+  };
+  const imageFor = (s) =>
+    s.image_url ? `/${String(s.image_url).replace(/^\/+/, "")}` : serviceImages[s.id] || "";
+
+  if (![form, service, date, time, name, phone, email, message].every(Boolean)) return;
+
   const submit = form.querySelector('button[type="submit"]');
   const localDate = (d) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   date.min = localDate(new Date());
+
   const showMessage = (txt, success = false) => {
     message.textContent = txt;
     message.style.color = success ? "#278052" : "#b13d5d";
@@ -26,65 +40,78 @@ document.addEventListener("DOMContentLoaded", () => {
     time.disabled = true;
   };
 
+  function syncServiceCards() {
+    if (!cardsContainer) return;
+    cardsContainer.querySelectorAll(".booking-service-card").forEach((card) => {
+      const selected = card.dataset.serviceId === service.value;
+      card.classList.toggle("selected", selected);
+      card.setAttribute("aria-pressed", String(selected));
+    });
+  }
+
+  function renderServiceCards(services) {
+    if (!cardsContainer) return;
+    cardsContainer.replaceChildren();
+    services.forEach((s) => {
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "booking-service-card";
+      card.dataset.serviceId = String(s.id);
+      card.setAttribute("aria-pressed", "false");
+
+      if (imageFor(s)) {
+        const img = document.createElement("img");
+        img.className = "booking-service-card-image";
+        img.src = imageFor(s);
+        img.alt = s.name;
+        img.loading = "lazy";
+        card.appendChild(img);
+      }
+
+      const title = document.createElement("span");
+      title.className = "booking-service-card-name";
+      title.textContent = s.name;
+      const details = document.createElement("span");
+      details.className = "booking-service-card-details";
+      const duration = document.createElement("span");
+      duration.textContent = `${s.duration_minutes} min`;
+      const price = document.createElement("strong");
+      price.className = "booking-service-card-price";
+      price.textContent = `${s.price}€`;
+      details.append(duration, price);
+      const check = document.createElement("span");
+      check.className = "booking-service-card-check";
+      check.textContent = "✓";
+      card.append(title, details, check);
+
+      card.addEventListener("click", () => {
+        service.value = String(s.id);
+        service.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      cardsContainer.appendChild(card);
+    });
+    syncServiceCards();
+  }
+
   async function loadServices() {
     try {
       const response = await fetch(`${API_URL}/services`);
-
-      if (!response.ok) {
-        throw new Error("Services HTTP " + response.status);
-      }
-
+      if (!response.ok) throw new Error("Services HTTP " + response.status);
       const services = await response.json();
+      if (!Array.isArray(services)) throw new Error("Invalid services response");
 
       service.replaceChildren(new Option("Zgjidh shërbimin", ""));
-
       services.forEach((s) => {
         const option = new Option(
           `${s.name} - ${s.price}€ (${s.duration_minutes} min)`,
           String(s.id),
         );
-
-        option.dataset.imageUrl = s.image_url || "";
-
+        option.dataset.imageUrl = imageFor(s);
         service.add(option);
       });
+      renderServiceCards(services);
       service.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-    
-catch (e) {
-      console.error(e);
-      showMessage("Shërbimet nuk u ngarkuan. Kontrollo serverin.");
-    }
-
-  services.forEach((s) => {
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "booking-service-card";
-    card.setAttribute("aria-pressed", "false");
-
-    const title = document.createElement("span");
-    title.className = "booking-service-card-name";
-    title.textContent = s.name;
-
-    const details = document.createElement("span");
-    details.className = "booking-service-card-details";
-    details.textContent = `${s.duration_minutes} min · ${s.price}€`;
-
-    const check = document.createElement("span");
-    check.className = "booking-service-card-check";
-    check.textContent = "✓";
-
-    card.append(title, details, check);
-
-    card.addEventListener("click", () => {
-      service.value = String(s.id);
-      service.dispatchEvent(new Event("change", { bubbles: true }));
-    });
-
-    cardsContainer.appendChild(card);
-  });
-}
- catch (e) {
+    } catch (e) {
       console.error(e);
       showMessage("Shërbimet nuk u ngarkuan. Kontrollo serverin.");
     }
@@ -102,10 +129,7 @@ catch (e) {
     }
     resetTimes("Duke ngarkuar oraret...");
     try {
-      const params = new URLSearchParams({
-        date: date.value,
-        service_id: service.value,
-      });
+      const params = new URLSearchParams({ date: date.value, service_id: service.value });
       const response = await fetch(`${API_URL}/available-slots?${params}`);
       if (!response.ok) throw new Error("Slots HTTP " + response.status);
       const data = await response.json();
@@ -114,10 +138,7 @@ catch (e) {
       const slots = (data.availableSlots || []).filter((slot) => {
         if (date.value > localDate(now)) return true;
         const [h, m] = slot.split(":").map(Number);
-        return (
-          date.value === localDate(now) &&
-          h * 60 + m > now.getHours() * 60 + now.getMinutes()
-        );
+        return date.value === localDate(now) && h * 60 + m > now.getHours() * 60 + now.getMinutes();
       });
       if (!slots.length) {
         resetTimes("Nuk ka orare të lira");
@@ -133,8 +154,13 @@ catch (e) {
       showMessage("Nuk mund të ngarkohen oraret. Provo përsëri.");
     }
   }
-  service.addEventListener("change", loadSlots);
+
+  service.addEventListener("change", () => {
+    syncServiceCards();
+    loadSlots();
+  });
   date.addEventListener("change", loadSlots);
+
   let submitting = false;
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -175,34 +201,25 @@ catch (e) {
         } else showMessage(result.message || "Rezervimi dështoi.");
         return;
       }
-      if (
-        response.status !== 201 ||
-        result.success !== true ||
-        !result.appointment?.id
-      ) {
+      if (response.status !== 201 || result.success !== true || !result.appointment?.id) {
         console.error("Unexpected response", result);
-        showMessage(
-          "Serveri nuk e konfirmoi rezervimin. Kontrollo para se ta provosh përsëri.",
-        );
+        showMessage("Serveri nuk e konfirmoi rezervimin. Kontrollo para se ta provosh përsëri.");
         return;
       }
       form.reset();
       date.min = localDate(new Date());
       resetTimes();
+      syncServiceCards();
       form.dispatchEvent(new CustomEvent("booking:success", { bubbles: true }));
-      showMessage(
-        "Rezervimi u regjistrua me sukses! Ju lutemi prisni konfirmimin.",
-        true,
-      );
+      showMessage("Rezervimi u regjistrua me sukses! Ju lutemi prisni konfirmimin.", true);
     } catch (err) {
       console.error(err);
-      showMessage(
-        "Nuk mund të konfirmohet rezervimi. Kontrollo para se ta provosh përsëri.",
-      );
+      showMessage("Nuk mund të konfirmohet rezervimi. Kontrollo para se ta provosh përsëri.");
     } finally {
       submitting = false;
       if (submit) submit.disabled = false;
     }
   });
+
   loadServices();
 });
