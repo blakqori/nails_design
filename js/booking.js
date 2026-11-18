@@ -34,7 +34,6 @@ async function loadServices() {
     );
 
     services
-      .filter((s) => s.is_active === true)
       .forEach((s) => {
         const option = new Option(
           `${s.name} - ${s.price}€ (${s.duration_minutes} min)`,

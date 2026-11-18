@@ -1,14 +1,12 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const grid = document.getElementById("services-grid");
   const filters = document.getElementById("services-filters");
 
   if (!grid || !filters) return;
 
-  const API_URL =
-    ["localhost", "127.0.0.1"].includes(window.location.hostname)
-      ? "http://localhost:5000"
-      : "/api";
+  const API_URL = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+    ? "http://localhost:5000"
+    : "/api";
 
   let services = [];
   let selectedCategory = "Te gjitha";
@@ -16,12 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderFilters() {
     const categories = [
       "Te gjitha",
-      ...new Set(services.map(s => s.category).filter(Boolean))
+      ...new Set(services.map((s) => s.category).filter(Boolean)),
     ];
 
     filters.replaceChildren();
 
-    categories.forEach(category => {
+    categories.forEach((category) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "services-filter";
@@ -47,9 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderServices() {
     grid.replaceChildren();
 
-    const visibleServices = services.filter(service =>
-      selectedCategory === "Te gjitha" ||
-      service.category === selectedCategory
+    const visibleServices = services.filter(
+      (service) =>
+        selectedCategory === "Te gjitha" ||
+        service.category === selectedCategory,
     );
 
     if (!visibleServices.length) {
@@ -59,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    visibleServices.forEach(service => {
+    visibleServices.forEach((service) => {
       const card = document.createElement("article");
       card.className = "service-card";
 
@@ -77,8 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const duration = document.createElement("p");
       duration.className = "service-duration";
-      duration.textContent =
-        `${service.duration_minutes} min`;
+      duration.textContent = `${service.duration_minutes} min`;
 
       const price = document.createElement("span");
       price.className = "price";
@@ -96,13 +94,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!select || !booking) return;
 
         select.value = String(service.id);
-        select.dispatchEvent(
-          new Event("change", { bubbles: true })
-        );
+        select.dispatchEvent(new Event("change", { bubbles: true }));
 
         booking.scrollIntoView({
           behavior: "smooth",
-          block: "start"
+          block: "start",
         });
       });
 
@@ -125,14 +121,12 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("Format i pavlefshem i sherbimeve.");
       }
 
-      services = data.filter(s => s.is_active === true);
-
+      services = data;
       renderFilters();
       renderServices();
     } catch (error) {
       console.error("Gabim gjate ngarkimit:", error);
-      grid.textContent =
-        "Sherbimet nuk mund te ngarkohen. Provo perseri.";
+      grid.textContent = "Sherbimet nuk mund te ngarkohen. Provo perseri.";
     }
   }
 
