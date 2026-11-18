@@ -49,7 +49,42 @@ document.addEventListener("DOMContentLoaded", () => {
         service.add(option);
       });
       service.dispatchEvent(new Event("change", { bubbles: true }));
-    } catch (e) {
+    }
+    
+catch (e) {
+      console.error(e);
+      showMessage("Shërbimet nuk u ngarkuan. Kontrollo serverin.");
+    }
+
+  services.forEach((s) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "booking-service-card";
+    card.setAttribute("aria-pressed", "false");
+
+    const title = document.createElement("span");
+    title.className = "booking-service-card-name";
+    title.textContent = s.name;
+
+    const details = document.createElement("span");
+    details.className = "booking-service-card-details";
+    details.textContent = `${s.duration_minutes} min · ${s.price}€`;
+
+    const check = document.createElement("span");
+    check.className = "booking-service-card-check";
+    check.textContent = "✓";
+
+    card.append(title, details, check);
+
+    card.addEventListener("click", () => {
+      service.value = String(s.id);
+      service.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    cardsContainer.appendChild(card);
+  });
+}
+ catch (e) {
       console.error(e);
       showMessage("Shërbimet nuk u ngarkuan. Kontrollo serverin.");
     }

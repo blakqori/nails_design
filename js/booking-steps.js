@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
       serviceCards.replaceChildren();
 
       services
-        .filter((item) => item.is_active === true)
+        .filter((item) => item.is_active !== false)
         .forEach((item) => {
           const card = document.createElement("button");
           card.type = "button";
