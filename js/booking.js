@@ -1,275 +1,111 @@
-/* ==========================================
-   NAILS DESIGN - BOOKING SYSTEM
-========================================== */
-
+/* NAILS DESIGN - Booking API; frontend on index.html */
 document.addEventListener("DOMContentLoaded", () => {
-const API_URL =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1"
-    ? "http://localhost:5000"
-    : "/api";
-  // Elementet e formularit
+  const API_URL = ["localhost", "127.0.0.1"].includes(window.location.hostname)
+    ? "http://localhost:5000" : "/api";
   const form = document.getElementById("booking-form");
-  const serviceSelect = document.getElementById("booking-service");
-  const dateInput = document.getElementById("booking-date");
-  const timeSelect = document.getElementById("booking-time");
-  const nameInput = document.getElementById("booking-name");
-  const phoneInput = document.getElementById("booking-phone");
-  const emailInput = document.getElementById("booking-email");
+  const service = document.getElementById("booking-service");
+  const date = document.getElementById("booking-date");
+  const time = document.getElementById("booking-time");
+  const name = document.getElementById("booking-name");
+  const phone = document.getElementById("booking-phone");
+  const email = document.getElementById("booking-email");
   const message = document.getElementById("booking-message");
+  if (![form,service,date,time,name,phone,email,message].every(Boolean)) return;
+  const submit = form.querySelector('button[type="submit"]');
+  const localDate = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  date.min = localDate(new Date());
+  const showMessage = (txt,success=false) => {message.textContent=txt;message.style.color=success?"#278052":"#b13d5d";};
+  const resetTimes = (txt="Së pari zgjidh shërbimin dhe datën") => {
+    time.replaceChildren(new Option(txt,""));time.disabled=true;
+  };
+  
+async function loadServices() {
+  try {
+    const response = await fetch(`${API_URL}/services`);
 
-  if (
-    !form ||
-    !serviceSelect ||
-    !dateInput ||
-    !timeSelect ||
-    !nameInput ||
-    !phoneInput ||
-    !emailInput ||
-    !message
-  ) {
-    console.error("Booking form elements not found.");
-    return;
-  }
+    if (!response.ok) {
+      throw new Error("Services HTTP " + response.status);
+    }
 
-  const submitButton = form.querySelector('button[type="submit"]');
+    const services = await response.json();
 
-  // Data lokale ne formatin YYYY-MM-DD
-  function getLocalDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    service.replaceChildren(
+      new Option("Zgjidh shërbimin", "")
+    );
 
-    return `${year}-${month}-${day}`;
-  }
-
-  // Mos lejo zgjedhjen e datave te kaluara
-  dateInput.min = getLocalDate(new Date());
-
-  // Mesazhet per klientin
-  function showMessage(text, success = false) {
-    message.textContent = text;
-    message.style.color = success ? "#278052" : "#b13d5d";
-  }
-
-  // Pastrimi i listes se oreve
-  function resetTimes(text = "Se pari zgjidh sherbimin dhe daten") {
-    timeSelect.replaceChildren(new Option(text, ""));
-    timeSelect.disabled = true;
-  }
-
-  // ==========================================
-  // 1. NGARKIMI I SHERBIMEVE
-  // ==========================================
-
-  async function loadServices() {
-    try {
-      const response = await fetch(`${API_URL}/services`);
-
-      if (!response.ok) {
-        throw new Error("Failed to load services.");
-      }
-
-      const services = await response.json();
-
-      serviceSelect.replaceChildren(new Option("Zgjidh sherbimin", ""));
-
-      services.forEach((service) => {
+    services
+      .filter((s) => s.is_active === true)
+      .forEach((s) => {
         const option = new Option(
-          `${service.name} - ${service.price}€ (${service.duration_minutes} min)`,
-          String(service.id),
+          `${s.name} - ${s.price}€ (${s.duration_minutes} min)`,
+          String(s.id)
         );
 
-        serviceSelect.add(option);
+        option.dataset.imageUrl = s.image_url || "";
+
+        service.add(option);
       });
 
-      console.log("Services loaded successfully:", services);
-    } catch (error) {
-      console.error("Error loading services:", error);
-
-      showMessage(
-        "Sherbimet nuk mund te ngarkohen. Kontrollo lidhjen me serverin.",
-      );
-    }
+  } catch (e) {
+    console.error(e);
+    showMessage(
+      "Shërbimet nuk u ngarkuan. Kontrollo serverin."
+    );
   }
+}
 
-  // ==========================================
-  // 2. NGARKIMI I TERMINEVE TE LIRA
-  // ==========================================
-
-  let requestNumber = 0;
-
-  async function loadAvailableSlots() {
-    const currentRequest = ++requestNumber;
-
-    resetTimes();
-    showMessage("");
-
-    const serviceId = serviceSelect.value;
-    const selectedDate = dateInput.value;
-
-    if (!serviceId || !selectedDate) {
-      return;
-    }
-
-    if (selectedDate < getLocalDate(new Date())) {
-      showMessage("Nuk mund te zgjedhesh date te kaluar.");
-      return;
-    }
-
-    resetTimes("Duke ngarkuar terminet...");
-
+  let requestNumber=0;
+  async function loadSlots() {
+    const request=++requestNumber;
+    resetTimes();showMessage("");
+    if (!service.value || !date.value) return;
+    if (date.value < localDate(new Date())) {showMessage("Nuk mund të zgjedhësh datë të kaluar.");return;}
+    resetTimes("Duke ngarkuar oraret...");
     try {
-      const params = new URLSearchParams({
-        date: selectedDate,
-        service_id: serviceId,
+      const params = new URLSearchParams({date:date.value,service_id:service.value});
+      const response=await fetch(`${API_URL}/available-slots?${params}`);
+      if(!response.ok) throw new Error("Slots HTTP " + response.status);
+      const data=await response.json();
+      if(request!==requestNumber)return;
+      const now=new Date();
+      const slots=(data.availableSlots||[]).filter(slot => {
+        if(date.value>localDate(now))return true;
+        const [h,m]=slot.split(":").map(Number);
+        return date.value===localDate(now) && h*60+m>now.getHours()*60+now.getMinutes();
       });
-
-      const response = await fetch(
-        `${API_URL}/available-slots?${params.toString()}`,
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to load available slots.");
-      }
-
-      const data = await response.json();
-
-      if (currentRequest !== requestNumber) {
-        return;
-      }
-
-      const now = new Date();
-      const today = getLocalDate(now);
-
-      const availableSlots = (data.availableSlots || []).filter((slot) => {
-        if (selectedDate > today) {
-          return true;
-        }
-
-        if (selectedDate < today) {
-          return false;
-        }
-
-        const [hours, minutes] = slot.split(":").map(Number);
-
-        const slotMinutes = hours * 60 + minutes;
-        const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-        return slotMinutes > currentMinutes;
-      });
-
-      if (availableSlots.length === 0) {
-        resetTimes("Nuk ka termine te lira");
-        return;
-      }
-
-      timeSelect.replaceChildren(new Option("Zgjidh oren", ""));
-
-      availableSlots.forEach((slot) => {
-        timeSelect.add(new Option(slot, slot));
-      });
-
-      timeSelect.disabled = false;
-    } catch (error) {
-      if (currentRequest !== requestNumber) {
-        return;
-      }
-
-      console.error("Error loading slots:", error);
-
-      resetTimes("Terminet nuk mund te ngarkohen");
-
-      showMessage("Nuk mund te ngarkohen terminet. Provo perseri.");
-    }
+      if(!slots.length){resetTimes("Nuk ka orare të lira");return;}
+      time.replaceChildren(new Option("Zgjidh orën",""));
+      slots.forEach(slot=>time.add(new Option(slot,slot)));
+      time.disabled=false;
+    }catch(e){if(request!==requestNumber)return;console.error(e);resetTimes("Orari nuk u ngarkua");showMessage("Nuk mund të ngarkohen oraret. Provo përsëri.");}
   }
-
-  // Kur ndryshon sherbimi ose data
-  serviceSelect.addEventListener("change", loadAvailableSlots);
-
-  dateInput.addEventListener("change", loadAvailableSlots);
-
-  // ==========================================
-  // 3. RUAJTJA E REZERVIMIT
-  // ==========================================
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    if (!form.reportValidity()) {
-      return;
-    }
-
-    const bookingData = {
-      full_name: nameInput.value.trim(),
-      phone: phoneInput.value.trim(),
-      email: emailInput.value.trim() || null,
-      service_id: Number(serviceSelect.value),
-      appointment_date: dateInput.value,
-      start_time: timeSelect.value,
-    };
-
-    if (!bookingData.full_name || !bookingData.phone) {
-      showMessage("Ploteso emrin dhe numrin e telefonit.");
-      return;
-    }
-
-    if (submitButton) {
-      submitButton.disabled = true;
-    }
-
-    showMessage("Duke ruajtur rezervimin...");
-
-    try {
-      const response = await fetch(`${API_URL}/appointments`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bookingData),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 409) {
-          await loadAvailableSlots();
-
-          showMessage("Ky termin eshte zene. Zgjidh nje ore tjeter.");
-        } else {
-          showMessage(result.message || "Rezervimi deshtoi.");
-        }
-
+  service.addEventListener("change",loadSlots);
+  date.addEventListener("change",loadSlots);
+  let submitting=false;
+  form.addEventListener("submit",async e=>{
+    e.preventDefault();if(submitting)return;
+    const fields=[service,date,time,name,phone,email];
+    const invalid=fields.find(field=>!field.checkValidity());
+    if(invalid){showMessage("Kontrollo të dhënat e rezervimit.");invalid.reportValidity();return;}
+    const data={full_name:name.value.trim(),phone:phone.value.trim(),email:email.value.trim()||null,service_id:Number(service.value),appointment_date:date.value,start_time:time.value};
+    if(!data.full_name||!data.phone){showMessage("Plotëso emrin dhe telefonin.");return;}
+    submitting=true;if(submit)submit.disabled=true;showMessage("Duke ruajtur rezervimin...");
+    try{
+      const response=await fetch(`${API_URL}/appointments`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+      const result=await response.json();
+      if(!response.ok){
+        if(response.status===409){await loadSlots();showMessage("Ky termin është zënë. Zgjidh orë tjetër.");}
+        else showMessage(result.message||"Rezervimi dështoi.");
         return;
       }
-
-      // Rezervimi u ruajt me sukses
-      form.reset();
-
-      dateInput.min = getLocalDate(new Date());
-
-      resetTimes();
-
-      showMessage(
-        "Rezervimi u regjistrua me sukses! Ju lutemi prisni konfirmimin.",
-        true,
-      );
-
-      console.log("Appointment created successfully:", result);
-    } catch (error) {
-      console.error("Booking error:", error);
-
-      showMessage("Nuk mund te lidhemi me serverin. Provo perseri.");
-    } finally {
-      if (submitButton) {
-        submitButton.disabled = false;
+      if(response.status!==201||result.success!==true||!result.appointment?.id){
+        console.error("Unexpected response",result);showMessage("Serveri nuk e konfirmoi rezervimin. Kontrollo para se ta provosh përsëri.");return;
       }
-    }
+      form.reset();date.min=localDate(new Date());resetTimes();
+      form.dispatchEvent(new CustomEvent("booking:success",{bubbles:true}));
+      showMessage("Rezervimi u regjistrua me sukses! Ju lutemi prisni konfirmimin.",true);
+    }catch(err){console.error(err);showMessage("Nuk mund të konfirmohet rezervimi. Kontrollo para se ta provosh përsëri.");}
+    finally{submitting=false;if(submit)submit.disabled=false;}
   });
-
-  // ==========================================
-  // 4. NISJA E SISTEMIT
-  // ==========================================
-
   loadServices();
 });

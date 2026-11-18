@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nails Design | Nail Art & Beauty</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="booking.css" />
 </head>
 <body>
 
@@ -232,62 +233,40 @@
       </div>
     </section>
 
-    <!-- SHERBIMET -->
-    <section class="services" id="services">
-      <div class="container">
-        <div class="section-heading">
-          <div>
-            <p class="section-label">
-              SHERBIMET
-              <span class="label-line"></span>
-            </p>
-            <h2>Cfare ofrojme? <span class="heart">♡</span></h2>
-          </div>
-
-          <p class="section-intro">
-            Nga manikyri klasik deri te dizajnet me te fundit,<br />
-            ne kujdesemi per thonjte tuaj me dashuri.
-          </p>
-        </div>
-
-        <div class="services-grid">
-          <article class="service-card">
-            <div class="service-icon">♙</div>
-            <h3>Manikyr klasik</h3>
-            <p>Pastrimi, formimi dhe<br />mbrojtja e thonjve tuaj.</p>
-            <span class="price">15€</span>
-          </article>
-
-          <article class="service-card">
-            <div class="service-icon">▤</div>
-            <h3>Manikyr me xhel</h3>
-            <p>Rezultate te qendrueshme<br />dhe me shkelqim.</p>
-            <span class="price">25€</span>
-          </article>
-
-          <article class="service-card">
-            <div class="service-icon">✎</div>
-            <h3>Dizajne unike</h3>
-            <p>Stile te vecanta per<br />cdo rast.</p>
-            <span class="price">30€</span>
-          </article>
-
-          <article class="service-card">
-            <div class="service-icon">♧</div>
-            <h3>Pedikyr</h3>
-            <p>Kujdes per thonjte<br />dhe lekuren e kembeve.</p>
-            <span class="price">20€</span>
-          </article>
-
-          <article class="service-card">
-            <div class="service-icon">✧</div>
-            <h3>Heqje dhe trajtim</h3>
-            <p>Heqje e xhelit dhe kujdes<br />per thonjte natyral.</p>
-            <span class="price">10€</span>
-          </article>
-        </div>
+    
+<!-- SHERBIMET -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="section-label">
+          SHERBIMET
+          <span class="label-line"></span>
+        </p>
+        <h2>Cfare ofrojme? <span class="heart">♡</span></h2>
       </div>
-    </section>
+
+      <p class="section-intro">
+        Nga manikyri klasik deri te dizajnet me te fundit,<br />
+        ne kujdesemi per thonjte tuaj me dashuri.
+      </p>
+    </div>
+
+    <!-- Filtrat -->
+    <div
+      id="services-filters"
+      class="services-filters"
+      role="group"
+      aria-label="Filtro sherbimet"
+    ></div>
+
+    <!-- Kartelat dinamike -->
+    <div id="services-grid" class="services-grid">
+      <p>Duke ngarkuar sherbimet...</p>
+    </div>
+  </div>
+</section>
+
 
     <!-- GALERIA -->
     <section class="gallery" id="gallery">
@@ -316,71 +295,67 @@
         </div>
       </div>
     </section>
-
     <!-- REZERVIMET -->
-    <section class="booking-section" id="booking">
-      <div class="container">
-        <div class="section-heading">
-          <div>
-            <p class="section-label">
-              REZERVIMET
-              <span class="label-line"></span>
-            </p>
-            <h2>Rezervo terminin tend <span class="heart">♡</span></h2>
-          </div>
-
-          <p class="section-intro">
-            Zgjidh sherbimin, daten dhe oren qe te pershtatet me se miri.
-          </p>
+<section class="booking-section" id="booking" aria-labelledby="booking-heading">
+  <div class="container">
+    <div class="booking-page-header">
+      <p class="section-label">REZERVIMET <span class="label-line"></span></p>
+      <h2 id="booking-heading">Rezervo momentin tënd <span class="heart">♡</span></h2>
+      <p>Zgjidh shërbimin, datën dhe orën që të përshtatet më së miri.</p>
+    </div>
+    <div class="booking-layout">
+      <section class="booking-panel" aria-label="Formulari i rezervimit">
+        <div class="booking-progress" aria-label="Hapat e rezervimit">
+          <span class="active">01 Shërbimi</span><span>02 Data & Ora</span><span>03 Të dhënat</span><span>04 Konfirmimi</span>
         </div>
-
         <form id="booking-form" class="booking-form">
-          <div class="booking-field">
-            <label for="booking-service">Sherbimi</label>
-            <select id="booking-service" required>
-              <option value="">Zgjidh sherbimin</option>
-            </select>
+          <div class="booking-step" data-step="1">
+            <h2>Zgjidh shërbimin</h2>
+            <div class="booking-field booking-service-field">
+              <label for="booking-service">Shërbimi</label>
+              <select id="booking-service" required><option value="">Duke ngarkuar shërbimet...</option></select>
+              <div id="booking-service-cards" class="booking-service-cards" role="group" aria-label="Zgjedhja e shërbimit"></div>
+            </div>
           </div>
-
-          <div class="booking-field">
-            <label for="booking-date">Data</label>
-            <input type="date" id="booking-date" required />
+          <div class="booking-step" data-step="2" hidden>
+            <h2>Zgjidh datën dhe orën</h2>
+            <div class="booking-field booking-date-field">
+              <label for="booking-date">Zgjidh datën</label><input type="date" id="booking-date" required />
+              <div id="booking-calendar" class="booking-calendar"></div>
+            </div>
+            <div class="booking-field booking-time-field">
+              <label for="booking-time">Zgjidh orën</label>
+              <select id="booking-time" required disabled><option value="">Së pari zgjidh datën</option></select>
+              <div id="booking-time-slots" class="booking-time-slots"></div>
+            </div>
           </div>
-
-          <div class="booking-field">
-            <label for="booking-time">Ora</label>
-            <select id="booking-time" required disabled>
-              <option value="">Se pari zgjidh sherbimin dhe daten</option>
-            </select>
+          <div class="booking-step" data-step="3" hidden>
+            <h2>Të dhënat tuaja</h2>
+            <div class="booking-field"><label for="booking-name">Emri dhe mbiemri</label><input type="text" id="booking-name" placeholder="Emri dhe mbiemri" required /></div>
+            <div class="booking-field"><label for="booking-phone">Telefoni</label><input type="tel" id="booking-phone" placeholder="04X XXX XXX" required /></div>
+            <div class="booking-field"><label for="booking-email">Email (opsional)</label><input type="email" id="booking-email" placeholder="email@example.com" /></div>
           </div>
-
-          <div class="booking-field">
-            <label for="booking-name">Emri dhe mbiemri</label>
-            <input type="text" id="booking-name"
-              placeholder="Emri dhe mbiemri" required />
+          <div class="booking-step" data-step="4" hidden>
+            <h2>Kontrollo rezervimin</h2><div id="booking-review">Përmbledhja do të shfaqet këtu.</div>
           </div>
-
-          <div class="booking-field">
-            <label for="booking-phone">Telefoni</label>
-            <input type="tel" id="booking-phone"
-              placeholder="04X XXX XXX" required />
+          <div class="booking-actions">
+            <button type="button" id="booking-prev" hidden>← Kthehu</button>
+            <button type="button" id="booking-next">Vazhdo →</button>
+            <button type="submit" class="booking-submit" hidden>Konfirmo rezervimin →</button>
+            <button type="button" id="booking-reset">Fillo nga e para</button>
           </div>
-
-          <div class="booking-field">
-            <label for="booking-email">Email (opsional)</label>
-            <input type="email" id="booking-email"
-              placeholder="email@example.com" />
-          </div>
-
-          <button type="submit" class="booking-submit">
-            Konfirmo rezervimin
-            <span>→</span>
-          </button>
-
           <p id="booking-message" role="status" aria-live="polite"></p>
         </form>
-      </div>
-    </section>
+      </section>
+      <aside class="booking-summary">
+        <p class="section-label">REZERVIMI YT</p><h2>Momenti yt i bukurisë ♡</h2>
+        <div id="booking-summary-content">Zgjidh shërbimin për të filluar.</div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+    
 
     <!-- KONTAKTI -->
     <section class="contact" id="contact">
@@ -446,6 +421,8 @@
   <!-- JAVASCRIPT -->
   <script src="js/script.js" defer></script>
   <script src="js/booking.js" defer></script>
+  <script src="js/booking-steps.js" defer></script>
+  <script src="js/services.js" defer></script>
 
 </body>
 </html>

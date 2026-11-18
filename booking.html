@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="sq">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Rezervo termin | Nails Design</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="booking.css" />
+  </head>
+
+  <body class="booking-page">
+    <main class="booking-main">
+      <div class="booking-page-header">
+        <a href="index.html" class="booking-back-home">
+          &larr; Kthehu te ballina
+        </a>
+
+        <p class="section-label">NAILS DESIGN</p>
+
+        <h1>
+          Rezervo momentin tënd
+          <span class="heart">♡</span>
+        </h1>
+
+        <p>Zgjidh shërbimin, datën dhe orën që të përshtatet më së miri.</p>
+      </div>
+
+      <div class="booking-layout">
+        <section class="booking-panel">
+          <div class="booking-progress">
+            <span class="active">01 Shërbimi</span>
+            <span>02 Data & Ora</span>
+            <span>03 Të dhënat</span>
+            <span>04 Konfirmimi</span>
+          </div>
+
+          <form id="booking-form" class="booking-form">
+            <!-- HAPI 1: SHERBIMI -->
+            <div class="booking-step" data-step="1">
+              <h2>Zgjidh shërbimin</h2>
+
+             <div class="booking-field booking-service-field">
+  <label for="booking-service">Shërbimi</label>
+
+  <select id="booking-service" required>
+    <option value="">Duke ngarkuar shërbimet...</option>
+  </select>
+
+  <div id="booking-service-cards" class="booking-service-cards"
+       role="group" aria-label="Zgjedhja e shërbimit">
+  </div>
+</div>
+  </div>
+
+            <!-- HAPI 2: DATA DHE ORA -->
+            <div class="booking-step" data-step="2" hidden>
+              <h2>Zgjidh datën dhe orën</h2>
+
+             <div class="booking-field booking-date-field">
+  <label for="booking-date">Zgjidh datën</label>
+
+  <input type="date" id="booking-date" required />
+
+  <div id="booking-calendar" class="booking-calendar"></div>
+</div>
+
+<div class="booking-field booking-time-field">
+  <label for="booking-time">Zgjidh orën</label>
+
+  <select id="booking-time" required disabled>
+    <option value="">Së pari zgjidh datën</option>
+  </select>
+
+  <div id="booking-time-slots" class="booking-time-slots"></div>
+</div>
+</div>
+
+            <!-- HAPI 3: TE DHENAT -->
+            <div class="booking-step" data-step="3" hidden>
+              <h2>Të dhënat tuaja</h2>
+
+              <div class="booking-field">
+                <label for="booking-name"> Emri dhe mbiemri </label>
+                <input
+                  type="text"
+                  id="booking-name"
+                  placeholder="Emri dhe mbiemri"
+                  required
+                />
+              </div>
+
+              <div class="booking-field">
+                <label for="booking-phone"> Telefoni </label>
+                <input
+                  type="tel"
+                  id="booking-phone"
+                  placeholder="04X XXX XXX"
+                  required
+                />
+              </div>
+
+              <div class="booking-field">
+                <label for="booking-email"> Email (opsional) </label>
+                <input
+                  type="email"
+                  id="booking-email"
+                  placeholder="email@example.com"
+                />
+              </div>
+            </div>
+
+            <!-- HAPI 4: KONFIRMIMI -->
+            <div class="booking-step" data-step="4" hidden>
+              <h2>Kontrollo rezervimin</h2>
+
+              <div id="booking-review">Përmbledhja do të shfaqet këtu.</div>
+            </div>
+
+            <div class="booking-actions">
+              <button type="button" id="booking-prev" hidden>
+                &larr; Kthehu
+              </button>
+
+              <button type="button" id="booking-next">Vazhdo &rarr;</button>
+
+              <button type="submit" class="booking-submit" hidden>
+                Konfirmo rezervimin &rarr;
+              </button>
+
+              <button type="button" id="booking-reset">Fillo nga e para</button>
+            </div>
+
+            <p id="booking-message" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <aside class="booking-summary">
+          <p class="section-label">REZERVIMI YT</p>
+          <h2>Momenti yt i bukurisë ♡</h2>
+
+          <div id="booking-summary-content">
+            Zgjidh shërbimin për të filluar.
+          </div>
+        </aside>
+      </div>
+    </main>
+<script src="js/booking.js" defer></script>
+<script src="js/booking-steps.js" defer></script>
+  </body>
+</html>

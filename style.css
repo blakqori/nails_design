@@ -2040,3 +2040,232 @@ main > section {
     white-space: nowrap;
   }
 }
+
+/* FILTRAT E SHERBIMEVE */
+
+.services-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 25px 0 30px;
+}
+
+.services-filter {
+  padding: 10px 20px;
+  border: 1px solid #e8b9c9;
+  border-radius: 30px;
+  background: #fff7fa;
+  color: #703448;
+  cursor: pointer;
+  font: inherit;
+  transition: 0.25s ease;
+}
+
+.services-filter:hover,
+.services-filter.active {
+  background: #c94f79;
+  color: white;
+  border-color: #c94f79;
+}
+
+/* KARTELAT DINAMIKE */
+
+.service-card {
+  overflow: hidden;
+}
+
+.service-card-image {
+  width: 100%;
+  height: 175px;
+  object-fit: cover;
+  border-radius: 14px;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.service-duration {
+  font-size: 14px;
+  color: #825b69;
+  margin: 10px 0;
+}
+
+.service-book-button {
+  display: block;
+  width: 100%;
+  margin-top: 18px;
+  padding: 11px 15px;
+  border: none;
+  border-radius: 25px;
+  background: #c94f79;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.service-book-button:hover {
+  background: #a93661;
+}
+
+@media (max-width: 600px) {
+  .service-card-image {
+    height: 145px;
+  }
+
+  .services-filter {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+
+/* ==========================================
+   RESPONSIVE - SEKSIONE TE NDARA
+========================================== */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--sticky-offset);
+}
+
+/* Secili seksion zë të paktën hapësirën
+   e dukshme poshtë navbar-it */
+main > section {
+  min-height: calc(100svh - var(--sticky-offset));
+  scroll-margin-top: var(--sticky-offset);
+  box-sizing: border-box;
+}
+
+/* HERO */
+#home.hero {
+  min-height: max(470px, calc(100svh - var(--sticky-offset)));
+  height: auto;
+}
+
+#home .hero-inner {
+  min-height: inherit;
+}
+
+/* SEKSIONET TJERA */
+#about,
+#services,
+#gallery,
+#booking,
+#contact {
+  min-height: calc(100svh - var(--sticky-offset));
+  height: auto;
+}
+
+/* KARTELAT E SHERBIMEVE */
+#services .services-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+#services .service-card {
+  min-width: 0;
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+  #home.hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  #home .hero-inner {
+    min-height: 0;
+    flex: 0 0 auto;
+  }
+
+  #services .services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* TELEFON */
+@media (max-width: 600px) {
+  #home.hero {
+    min-height: calc(100svh - var(--sticky-offset));
+    justify-content: center;
+  }
+
+  #home .hero-inner {
+    min-height: 0;
+    padding-top: 25px;
+    padding-bottom: 15px;
+  }
+
+  #home .hero-image {
+    height: clamp(220px, 60vw, 310px);
+    flex-shrink: 0;
+  }
+
+  #home .hero-note {
+    margin-top: 16px;
+    margin-bottom: 12px;
+  }
+
+  #about,
+  #services,
+  #gallery,
+  #booking,
+  #contact {
+    min-height: calc(100svh - var(--sticky-offset));
+    height: auto;
+  }
+
+  #services .services-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* TELEFON SHUME I VOGEL */
+@media (max-width: 380px) {
+  #home .hero-image {
+    height: 220px;
+  }
+
+  #services .services-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* FOTOGRAFITE E SHERBIMEVE NE REZERVIM */
+
+.booking-service-card {
+  overflow: hidden;
+}
+
+.booking-service-card-image {
+  display: block;
+  width: 100%;
+  height: 145px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+
+
+/* FOTOGRAFITE DINAMIKE NE REZERVIM */
+
+.booking-service-card {
+  overflow: hidden;
+}
+
+.booking-service-card-image {
+  display: block;
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 600px) {
+  .booking-service-card-image {
+    height: 115px;
+  }
+}

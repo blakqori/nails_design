@@ -11,9 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const dropdown = document.querySelector(".nav-dropdown");
   const dropdownToggle = document.querySelector(".dropdown-toggle");
 
-  const navLinks = document.querySelectorAll(
-    ".navbar a, .desktop-booking-btn, .logo, .hero-btn",
-  );
+  const navLinks = document.querySelectorAll(".navbar a, .desktop-booking-btn");
 
   const sections = document.querySelectorAll("main section[id]");
 
@@ -22,13 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
   /* =====================================
        1. MOBILE MENU
     ===================================== */
-
-  function closeDropdown() {
-    if (!dropdown || !dropdownToggle) return;
-
-    dropdown.classList.remove("open");
-    dropdownToggle.setAttribute("aria-expanded", "false");
-  }
 
   function closeMobileMenu() {
     navbar.classList.remove("menu-open");
@@ -44,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (menuToggle) {
       menuToggle.setAttribute("aria-expanded", String(isOpen));
+
       menuToggle.setAttribute(
         "aria-label",
         isOpen ? "Mbyll menune" : "Hap menune",
@@ -56,22 +48,35 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (menuToggle) {
-    menuToggle.addEventListener("click", toggleMobileMenu);
+    menuToggle.addEventListener("click", () => {
+      toggleMobileMenu();
+    });
   }
 
   /* =====================================
        2. SERVICES DROPDOWN
     ===================================== */
 
+  function closeDropdown() {
+    if (!dropdown || !dropdownToggle) return;
+
+    dropdown.classList.remove("open");
+
+    dropdownToggle.setAttribute("aria-expanded", "false");
+  }
+
   function toggleDropdown() {
     if (!dropdown || !dropdownToggle) return;
 
     const isOpen = dropdown.classList.toggle("open");
+
     dropdownToggle.setAttribute("aria-expanded", String(isOpen));
   }
 
   if (dropdownToggle) {
-    dropdownToggle.addEventListener("click", toggleDropdown);
+    dropdownToggle.addEventListener("click", () => {
+      toggleDropdown();
+    });
   }
 
   /* =====================================
@@ -139,9 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentSection = "home";
 
     sections.forEach((section) => {
-      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-
-      if (sectionTop <= scrollPosition) {
+      if (section.offsetTop <= scrollPosition) {
         currentSection = section.id;
       }
     });
@@ -213,19 +216,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!galleryImages.length) return;
 
   let currentIndex = 0;
-  let previousFocus = null;
-  let previousOverflow = "";
 
-  /* =====================================
-       CREATE LIGHTBOX
-    ===================================== */
+  /* Krijojme dritaren e fotografise */
 
   const lightbox = document.createElement("div");
   lightbox.className = "lightbox";
-
-  lightbox.setAttribute("role", "dialog");
-  lightbox.setAttribute("aria-modal", "true");
-  lightbox.setAttribute("aria-label", "Galeria e fotografive");
 
   lightbox.innerHTML = `
         <button
@@ -262,8 +257,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.appendChild(lightbox);
 
   const lightboxImage = lightbox.querySelector(".lightbox-image");
+
   const closeButton = lightbox.querySelector(".lightbox-close");
+
   const previousButton = lightbox.querySelector(".lightbox-prev");
+
   const nextButton = lightbox.querySelector(".lightbox-next");
 
   /* =====================================
@@ -274,6 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentIndex = (index + galleryImages.length) % galleryImages.length;
 
     lightboxImage.src = galleryImages[currentIndex].src;
+
     lightboxImage.alt = galleryImages[currentIndex].alt;
   }
 
@@ -282,15 +281,11 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================== */
 
   function openLightbox(index) {
-    previousFocus = document.activeElement;
-    previousOverflow = document.body.style.overflow;
-
     showImage(index);
 
     lightbox.classList.add("open");
-    document.body.style.overflow = "hidden";
 
-    closeButton.focus();
+    document.body.style.overflow = "hidden";
   }
 
   /* =====================================
@@ -298,34 +293,18 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================== */
 
   function closeLightbox() {
-    if (!lightbox.classList.contains("open")) return;
-
     lightbox.classList.remove("open");
-    document.body.style.overflow = previousOverflow;
 
-    if (previousFocus && typeof previousFocus.focus === "function") {
-      previousFocus.focus();
-    }
+    document.body.style.overflow = "";
   }
 
   /* =====================================
-       IMAGE CLICK AND KEYBOARD
+       IMAGE CLICK
     ===================================== */
 
   galleryImages.forEach((image, index) => {
-    image.setAttribute("tabindex", "0");
-    image.setAttribute("role", "button");
-    image.setAttribute("aria-label", `Hap fotografinë ${index + 1}`);
-
     image.addEventListener("click", () => {
       openLightbox(index);
-    });
-
-    image.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openLightbox(index);
-      }
     });
   });
 
@@ -358,35 +337,20 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================== */
 
   document.addEventListener("keydown", (event) => {
-    if (!lightbox.classList.contains("open")) return;
+    if (!lightbox.classList.contains("open")) {
+      return;
+    }
 
     if (event.key === "Escape") {
-      event.preventDefault();
       closeLightbox();
     }
 
     if (event.key === "ArrowRight") {
-      event.preventDefault();
       showImage(currentIndex + 1);
     }
 
     if (event.key === "ArrowLeft") {
-      event.preventDefault();
       showImage(currentIndex - 1);
-    }
-
-    if (event.key === "Tab") {
-      const buttons = [closeButton, previousButton, nextButton];
-
-      const current = buttons.indexOf(document.activeElement);
-
-      if (event.shiftKey && current <= 0) {
-        event.preventDefault();
-        nextButton.focus();
-      } else if (!event.shiftKey && current === buttons.length - 1) {
-        event.preventDefault();
-        closeButton.focus();
-      }
     }
   });
 });
